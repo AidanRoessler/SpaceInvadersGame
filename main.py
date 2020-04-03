@@ -40,10 +40,13 @@ while True:
   if keyInput[pygame.K_RIGHT]:
    shipRect.centerx += 2
   if keyInput[pygame.K_UP]:
-     screen.blit(blast,blastRect)
+   print("Inital centery" + str(blastRect.centery))
+   while blastRect.centery >0: #Eventually needs to run until it comes in contact with an alien
      blastRect.centery -= 1
      screen.blit(blast,blastRect)
      pygame.display.flip()
   screen.blit(ship,shipRect)
+  blastRect.centerx=(shipRect.centerx)
+  blastRect.centery=((shipRect.centery) + 20 )
   pygame.display.flip()
  
