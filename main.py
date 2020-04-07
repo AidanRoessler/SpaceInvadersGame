@@ -29,25 +29,17 @@ blastRect.centery=((shipRect.centery) + 20 )
 blastSpeed=[10,10]
 
 def alienSetup(alienName,x,y):
-  
   #Ensuring that the hit aliens are off the screen
   if alienPositions[str(alienName)][2]:
     alienPositions[str(alienName)]=[1000,2000,True]
     return(False)#Had to put the return here to get out of the function 
-  if count==0:
-    alienPositions[str(alienName)]=[x,y,False] #Had to put this at the top b/c pygames changes the name of the surface once the image is loaded in
-   alienName=pygame.image.load("alien.png")
-   alienNameRect=alienName.get_rect()
-   alienNameRect.centerx=x
-   alienNameRect.centery=y
-  if count>0:
-   alienName=pygame.image.load("alien.png")
-   alienNameRect=alienName.get_rect()
-   moveX=random.randint(-2,2)
-   moveY=random.randint(-2,2)
-  #Reverse direction if it is near/below the space ship 
-   alienNameRect.centerx += moveX
-   alienNameRect.centery += moveY
+  alienPositions[str(alienName)]=[x,y,False] #Had to put this at the top b/c pygames changes the name of the surface once the image is loaded in
+  alienName=pygame.image.load("alien.png")
+  alienNameRect=alienName.get_rect()
+  alienNameRect.centerx=x
+  alienNameRect.centery=y
+  screen.blit(alienName,alienNameRect)
+  pygame.display.flip()
  
 
 def setupAllAliens():
@@ -79,7 +71,6 @@ while True:
   if keyInput[pygame.K_RIGHT]:
    shipRect.centerx += 2
   if keyInput[pygame.K_UP]:
-   print("Inital centery" + str(blastRect.centery))
    blastRect.centerx=(shipRect.centerx)
    blastRect.centery=((shipRect.centery) + 20 )
    while blastRect.centery >0:
@@ -88,8 +79,7 @@ while True:
      setupAllAliens()
      pygame.display.flip()
      for i in (alienPositions.keys()):
-       print(alienPositions[i][1])
-       if (((blastRect.centery)-(alienPositions[i][1])<=50) and ((blastRect.centerx)-(alienPositions[i][0])<=50)):
+       if ((((blastRect.centery)-(alienPositions[i][1])<=100) and ((blastRect.centery)-(alienPositions[i][1])>0)) and (((blastRect.centerx)-(alienPositions[i][0])<=100) and        ((blastRect.centerx)-(alienPositions[i][0])>0))):
          print(str(i)+ " hit")
          #Moves aliens off the screen if they are hit
          alienPositions[str(i)]=[1000,2000,True]
