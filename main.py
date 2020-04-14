@@ -16,14 +16,16 @@ clock = pygame.time.Clock()
 width=800
 height=600
 screen=pygame.display.set_mode((800,600))
+textColor = (255,255,255)
+background=pygame.image.load("background.jpg")
 
+greetingText=myFont.render("Welcome to Space Invaders! Hit all 3 aliens to win!",True,textColor)
 
 ship=pygame.image.load("spaceship.png")
 shipRect=ship.get_rect()
 #Set inital postion of rect at center of the screen
 shipRect.centerx = (width//2)
 shipRect.centery = (height//2)
-screen.blit(ship,shipRect)
 
 blast=pygame.image.load("energyball.png")
 blastRect=blast.get_rect()
@@ -86,12 +88,23 @@ def scoreUpdater():
   for k in range(len(alienPositions)):
     if alienPositions[k][2]:
       score+=1
-  scoreSurface=myFont.render("Score: "+str(score),True,(0,0,0))
+  scoreSurface=myFont.render("Score: "+str(score),True,textColor)
   screen.blit(scoreSurface,(280,100))
+  if score==3:
+    time.sleep(1/1000)
+    winSurface=myFont.render("You win!!",True,textColor)
+    screen.blit(winSurface,(280,500))
+    pygame.display.flip()
+    time.sleep(3)
+    pygame.quit()
+    sys.exit()
 
 while True:
-  screen.fill((255,100,200))
   clock.tick(30)
+  screen.blit(background,(0,0))
+  screen.blit(greetingText,(25,50))
+
+  
   keyInput=pygame.key.get_pressed()
   if keyInput[pygame.K_ESCAPE]:
     pygame.quit()
@@ -101,23 +114,23 @@ while True:
       pygame.quit()
       sys.exit()
   if keyInput[pygame.K_LEFT]:
-   shipRect.centerx -= 2
+   shipRect.centerx -= 4
   if keyInput[pygame.K_RIGHT]:
-   shipRect.centerx += 2
+   shipRect.centerx += 4
   if keyInput[pygame.K_UP]:
    blastRect.centerx=(shipRect.centerx)
    blastRect.centery=((shipRect.centery) + 20 )
    while blastRect.centery >0:
-     blastRect.centery -= 1
+     blastRect.centery -= 2
      screen.blit(blast,blastRect)
      energyBallFlag=True
      setupAllAliens()
      pygame.display.flip()
      for i in range(len(alienPositions)):
-       if ((((blastRect.centery)-(alienPositions[i][1])<=50) and ((blastRect.centery)-(alienPositions[i][1])>=0)) and ((((blastRect.centerx)-(alienPositions[i][0])<=50) and ((blastRect.centerx)-(alienPositions[i][0])>=0)))):
+       if ((((blastRect.centery)-(alienPositions[i][1])<30) and ((blastRect.centery)-(alienPositions[i][1])>=0)) and ((((blastRect.centerx)-(alienPositions[i][0])<=100) and ((blastRect.centerx)-(alienPositions[i][0])>=0)))):
          print("alien "+str(i+1)+ " hit")
          #Moves aliens off the screen if they are hit
-         alienPositions[i]=[1000,3000,True]             
+         alienPositions[i]=[1000,3000,True,0]             
   screen.blit(ship,shipRect)
   energyBallFlag=False
   setupAllAliens()
