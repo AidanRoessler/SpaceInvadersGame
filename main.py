@@ -5,6 +5,7 @@ import random
 
 alienPositions=[[1000,2000,False,0],[1000,2000,False,0],[1000,2000,False,0]]
 score=0
+lives=1 
 count=0
 energyBallFlag=False
 rightEnd=False
@@ -20,7 +21,6 @@ height=600
 screen=pygame.display.set_mode((800,600))
 textColor = (255,255,255)
 background=pygame.image.load("background.jpg")
-
 greetingText=myFont.render("Welcome to Space Invaders! Hit all 3 aliens to win!",True,textColor)
 
 ship=pygame.image.load("spaceship.png")
@@ -100,21 +100,36 @@ def setupAllAliens():
   alienSetup("alienTwo",300,200,1)
   alienSetup("alienThree",500,200,2)
 
-
 def alienFire():
+  global lives
   alienIsFiring=random.randint(0,100)
   alienFiring=random.randint(0,2)
   if (alienIsFiring==15):
     time.sleep(1)
     alienBlastRect.centerx=alienPositions[alienFiring][0]
-    alienBlastRect.centery=alienPositions[alienFiring][1]
+    alienBlastRect.centery=alienPositions[alienFiring][1]+40
     while alienBlastRect.centery<800:
       alienBlastRect.centery += 2
       screen.blit(alienBlast,alienBlastRect)
       setupAllAliens()
       screen.blit(ship,shipRect)
       pygame.display.flip()
-
+      if(((shipRect.centery-alienBlastRect.centery)<=50) and (abs(shipRect.centerx-alienBlastRect.centerx)<=50)):
+        lives-=1
+        print("Lives: "+str(lives))
+        return("Life lost")
+ 
+def livesUpdater():
+  livesSurface=myFont.render("Lives: "+str(lives),True,textColor)
+  screen.blit(livesSurface,(400,100))
+  if lives==0:
+    time.sleep(1/1000)
+    looseSurface=myFont.render("You loose! Better luck next time",True,textColor)
+    screen.blit(looseSurface,(width//2-200,height//2))
+    pygame.display.flip()
+    time.sleep(3)
+    pygame.quit()
+    sys.exit()
 
 def scoreUpdater():
   score=0
@@ -122,15 +137,16 @@ def scoreUpdater():
     if alienPositions[k][2]:
       score+=1
   scoreSurface=myFont.render("Score: "+str(score),True,textColor)
-  screen.blit(scoreSurface,(280,100))
+  screen.blit(scoreSurface,(200,100))
   if score==3:
     time.sleep(1/1000)
     winSurface=myFont.render("You win!!",True,textColor)
-    screen.blit(winSurface,(280,500))
+    screen.blit(winSurface,(width//2-100,height//2))
     pygame.display.flip()
     time.sleep(3)
     pygame.quit()
     sys.exit()
+
 
 while True:
   clock.tick(30)
@@ -165,8 +181,8 @@ while True:
          alienPositions[i]=[1000,3000,True,0]  
   energyBallFlag=True
   alienFire()
+  livesUpdater()
   screen.blit(ship,shipRect)
-  
   energyBallFlag=False
   setupAllAliens()
   scoreUpdater()
